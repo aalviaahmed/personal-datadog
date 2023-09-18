@@ -11,6 +11,7 @@ datadog:
   clusterChecks:
     enabled: true
   apm:
+    socketEnabled: false #required for APM Trace Collection via UNIX Domain Socket https://docs.datadoghq.com/containers/kubernetes/apm/?tab=uds#configure-the-datadog-agent-to-accept-traces 
     portEnabled: true #required for APM Trace Collection via local host port 8126
   logs:
     enabled: true #required for Log Collection
@@ -30,9 +31,9 @@ datadog:
     enabled: true #required to use Datadog Universal Service Monitoring  
   securityAgent:
     compliance:
-      enabled: true #required for Datadog Cloud Security Managment Enterprise 
+      enabled: false #required for Datadog Cloud Security Managment Enterprise 
     runtime:
-      enabled: true #required for Dataadog Cloud Workload Security 
+      enabled: false #required for Dataadog Cloud Workload Security 
 clusterAgent:
   enabled: true
   replicas: 2 #Default is 1, increase for HA as needed 
