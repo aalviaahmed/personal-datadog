@@ -1,3 +1,4 @@
+#This template is desinged for Datadog Agent deployments on Azure Kubernetes Services and is designed to have all features of the agent enabled
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
