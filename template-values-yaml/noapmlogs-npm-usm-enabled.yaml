@@ -1,3 +1,4 @@
+targetSystem: "linux"
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
@@ -8,6 +9,9 @@ datadog:
   ## Set to 'us5.datadoghq.com' to send data to the US5 site.
   ## Set to 'ddog-gov.com' to send data to the US1-FED site.
   ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
+  env:
+     - name: DD_ENV
+       value: <DD_ENV> #Setting this will ensure all of the services identifed via usm report to a particular env when viewing the Service Catalog
   clusterChecks:
     enabled: true
   apm:
@@ -19,6 +23,7 @@ datadog:
   processAgent:
     processCollection: true #required for Live Containers View & Live Process collection
   dogstatsd:
+    port: 8125 
     useHostPort: true
   kubeStateMetricsCore:
     enabled: true
@@ -36,7 +41,10 @@ datadog:
       enabled: false #required for Dataadog Cloud Workload Security 
 clusterAgent:
   enabled: true
-  replicas: 2 #Default is 1, increase for HA as needed 
+  replicas: 2 #Default is 1, increase for HA as needed
+  admissionController:
+    # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
+    enabled: true
   confd:
     kube_apiserver_metrics.yaml: |-
       cluster_check: true
