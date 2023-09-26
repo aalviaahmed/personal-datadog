@@ -3,8 +3,8 @@
     "networkMode": "awsvpc",
     "containerDefinitions": [
         {
-            "name": "example-app",
-            "image": "docker.io/jacksondavenport/random-logger:latest"
+            "name": "<YOUR_APPLICATION_NAME>",
+            "image": "<YOUR_APPLICATION_IMAGE>"
         },
         {
             "name": "datadog-agent",
