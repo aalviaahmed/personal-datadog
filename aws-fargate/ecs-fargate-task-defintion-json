@@ -1,0 +1,38 @@
+{
+    "family": "<FirstNameLastName>-Basic",
+    "networkMode": "awsvpc",
+    "containerDefinitions": [
+        {
+            "name": "example-app",
+            "image": "docker.io/jacksondavenport/random-logger:latest"
+        },
+        {
+            "name": "datadog-agent",
+            "image": "public.ecr.aws/datadog/agent:latest",
+            "essential": true,
+            "environment": [
+                {
+                    "name": "DD_API_KEY",
+                    "value": "<API_KEY>"
+                },
+                {
+                    "name": "ECS_FARGATE",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_APM_ENABLED",
+                    "value": "true"
+                },
+                {
+                    "name": "DD_SITE",
+                    "value": "datadoghq.com"
+                }
+            ]
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512"
+}
