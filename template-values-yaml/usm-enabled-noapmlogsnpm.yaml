@@ -21,7 +21,8 @@ datadog:
     enabled: false #required for Log Collection
     containerCollectAll: false #required to collect all conatiner logs 
   processAgent:
-    processCollection: true #required for Live Containers View & Live Process collection
+    enabled: true
+    processCollection: true
   dogstatsd:
     port: 8125 
     useHostPort: true
@@ -29,19 +30,22 @@ datadog:
     enabled: true
   kubeStateMetricsEnabled: false
   kubelet:
-    tlsVerify: false #required for AKS, default=true
+    tlsVerify: false
+#datadog.networkMonitoring.enabled set to true enabled Datadog NPM
   networkMonitoring:
-    enabled: false #required to use Datadog Network Performance Monitoring
+    enabled: false
+#datadog.serviceMonitoring.enabled set to true enabled Datadog USM
   serviceMonitoring:
-    enabled: true #required to use Datadog Universal Service Monitoring  
+    enabled: true
+#datadog.serviceMonitoring.enabled set to true enabled Datadog Cloud Workload Security Products
   securityAgent:
     compliance:
-      enabled: false #required for Datadog Cloud Security Managment Enterprise 
+      enabled: false
     runtime:
-      enabled: false #required for Dataadog Cloud Workload Security 
+      enabled: false
 clusterAgent:
   enabled: true
-  replicas: 2 #Default is 1, increase for HA as needed
+  replicas: 2 
   admissionController:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
@@ -55,4 +59,4 @@ clusterAgent:
           bearer_token_auth: true
 clusterChecksRunner:
   enabled: true
-  replicas: 2
+  replicas: 1
