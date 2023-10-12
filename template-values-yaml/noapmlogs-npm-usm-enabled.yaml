@@ -13,7 +13,7 @@ datadog:
      - name: DD_ENV
        value: <DD_ENV> #Setting this will ensure all of the services identifed via usm report to a particular env when viewing the Service Catalog
   clusterChecks:
-    enabled: true
+    enabled: false
   apm:
     socketEnabled: false #required for APM Trace Collection via UNIX Domain Socket https://docs.datadoghq.com/containers/kubernetes/apm/?tab=uds#configure-the-datadog-agent-to-accept-traces 
     portEnabled: false #required for APM Trace Collection via local host port 8126
@@ -31,7 +31,7 @@ datadog:
   kubelet:
     tlsVerify: false #required for AKS, default=true
   networkMonitoring:
-    enabled: true #required to use Datadog Network Performance Monitoring
+    enabled: false #required to use Datadog Network Performance Monitoring
   serviceMonitoring:
     enabled: true #required to use Datadog Universal Service Monitoring  
   securityAgent:
@@ -54,5 +54,5 @@ clusterAgent:
           ssl_ca_cert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
           bearer_token_auth: true
 clusterChecksRunner:
-  enabled: true
+  enabled: false
   replicas: 2
