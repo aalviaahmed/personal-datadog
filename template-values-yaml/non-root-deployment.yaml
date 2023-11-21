@@ -1,39 +1,98 @@
-#This template is desinged for Datadog Agent deployments on Azure Kubernetes Services and is designed to have all features of the agent enabled
+targetSystem: "linux"
 datadog:
+# datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
+  securityContext:
+    runAsUser: 101 #UID:101 is the dd-agent user (non root)
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
   site: <ENTER_DATADOG_SITE>
+  env:
+     - name: DD_ENV
+       value: <ENTER_DD_ENV>
   apm:
+    socketEnabled: false 
     portEnabled: true #required for APM Trace Collection via local host port 8126
   logs:
-    enabled: true #required for Log Collection
-    containerCollectAll: true #required to collect all conatiner logs 
+    enabled: false #required for Log Collection
+    containerCollectAll: false #required to collect all conatiner logs 
   processAgent:
     processCollection: true #required for Live Containers View & Live Process collection
+  ## dogstatsd configuration
+  ## ref: https://docs.datadoghq.com/agent/kubernetes/dogstatsd/
+  ## To emit custom metrics from your Kubernetes application, use DogStatsD.
   dogstatsd:
+    port: 8125
+    # datadog.dogstatsd.originDetection -- Enable origin detection for container tagging
+    ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
+    originDetection: true
+    # datadog.dogstatsd.tagCardinality -- Sets the tag cardinality relative to the origin detection
+    ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/#using-origin-detection-for-container-tagging
+    tagCardinality: low
+    # datadog.dogstatsd.useSocketVolume -- Enable dogstatsd over Unix Domain Socket with an HostVolume
+    ## ref: https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
+    useSocketVolume: false
+    # datadog.dogstatsd.socketPath -- Path to the DogStatsD socket
+    #socketPath: /var/run/datadog/dsd.socket
+
+    # datadog.dogstatsd.hostSocketPath -- Host path to the DogStatsD socket
+    #hostSocketPath: /var/run/datadog/
+
+    # datadog.dogstatsd.useHostPort -- Sets the hostPort to the same value of the container port
+
+    ## Needs to be used for sending custom metrics.
+    ## The ports need to be available on all hosts.
+    ##
+    ## WARNING: Make sure that hosts using this are properly firewalled otherwise
+    ## metrics and traces are accepted from any host able to connect to this host.
     useHostPort: true
-  kubeStateMetricsCore:
-    enabled: true
-  kubeStateMetricsEnabled: false
-  kubelet:
-    tlsVerify: false #required for AKS
-  networkMonitoring:
-    enabled: true #required to use Datadog Network Performance Monitoring
-  serviceMonitoring:
-    enabled: true #required to use Datadog Universal Service Monitoring  
-  securityAgent:
-    compliance:
-      enabled: true #required for Datadog Cloud Security Managment Enterprise 
-    runtime:
-      enabled: true #required for Dataadog Cloud Workload Security 
+
+    # datadog.dogstatsd.useHostPID -- Run the agent in the host's PID namespace
+    ## DEPRECATED: use datadog.useHostPID instead.
+
+    ## This is required for Dogstatsd origin detection to work.
+    ## See https://docs.datadoghq.com/developers/dogstatsd/unix_socket/
+    useHostPID: false
+
+    # datadog.dogstatsd.nonLocalTraffic -- Enable this to make each node accept non-local statsd traffic (from outside of the pod)
+
+    ## ref: https://github.com/DataDog/docker-dd-agent#environment-variables
+    nonLocalTraffic: true
+## This is the Datadog Cluster Agent implementation that handles cluster-wide
+## metrics more cleanly, separates concerns for better rbac, and implements
+## the external metrics API so you can autoscale HPAs based on datadog metrics
+## ref: https://docs.datadoghq.com/agent/kubernetes/cluster/
 clusterAgent:
   enabled: true
   replicas: 2 #Default is 1, increase for HA as needed 
-  confd:
-    kube_apiserver_metrics.yaml: |-
-      cluster_check: true
-      init_config:
-      instances:
-        - prometheus_url: https://kubernetes.default/metrics
-          ssl_ca_cert: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          bearer_token_auth: true
+  admissionController:
+    # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
+    enabled: true
+   # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
+    webhookName: datadog-webhook
+    # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
+    mutateUnlabelled: false
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+    ## If clusterAgent.admissionController.configMode is not set:
+    ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
+    ##   * and datadog.apm.portEnabled is true, the Admission Controller uses hostip.
+    ##   * Otherwise, the Admission Controller defaults to hostip.
+    ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission_controller/#configure-apm-and-dogstatsd-communication-mode
+    # configMode:  service
+  # clusterAgent.securityContext -- Allows you to overwrite the default PodSecurityContext on the cluster-agent pods.
+  securityContext: {}
+  containers:
+    clusterAgent:
+      # clusterAgent.containers.clusterAgent.securityContext -- Specify securityContext on the cluster-agent container.
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+    initContainers:
+      # clusterAgent.containers.initContainer.securityContext -- Specify securityContext on the initContainers.
+      securityContext: {}
+
+remoteConfiguration:
+  # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
+  # Can be overriden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
+  # Preferred way to enable Remote Configuration.
+  enabled: false
