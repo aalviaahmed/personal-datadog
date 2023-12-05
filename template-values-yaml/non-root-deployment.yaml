@@ -1,4 +1,12 @@
 targetSystem: "linux"
+# registry -- Registry to use for all Agent images (default to [gcr.io | eu.gcr.io | asia.gcr.io | public.ecr.aws/datadog] depending on datadog.site value)
+## Currently we offer Datadog Agent images on:
+## GCR US - use gcr.io/datadoghq
+## GCR Europe - use eu.gcr.io/datadoghq
+## GCR Asia - use asia.gcr.io/datadoghq
+## AWS - use public.ecr.aws/datadog
+## DockerHub - use docker.io/datadog
+registry:  # Default is gcr.io/datadoghq, please add the path to your custom repo if you would like to pull from there
 datadog:
 # datadog.securityContext -- Allows you to overwrite the default PodSecurityContext on the Daemonset or Deployment
   securityContext:
@@ -64,6 +72,16 @@ datadog:
 clusterAgent:
   enabled: true
   replicas: 2 #Default is 1, increase for HA as needed 
+    ## Define the Datadog Cluster-Agent image to work with
+  image:
+    # clusterAgent.image.name -- Cluster Agent image name to use (relative to `registry`)
+    name: cluster-agent
+    # clusterAgent.image.tag -- Cluster Agent image tag to use
+    tag: 7.49.1
+    # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
+    digest: ""
+    # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
+    repository: 
   admissionController:
     # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
