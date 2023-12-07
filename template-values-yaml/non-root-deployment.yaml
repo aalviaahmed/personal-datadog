@@ -65,6 +65,26 @@ datadog:
 
     ## ref: https://github.com/DataDog/docker-dd-agent#environment-variables
     nonLocalTraffic: true
+  # datadog.kubeStateMetricsEnabled -- If true, deploys the kube-state-metrics deployment
+
+  ## ref: https://github.com/kubernetes/kube-state-metrics/tree/kube-state-metrics-helm-chart-2.13.2/charts/kube-state-metrics
+  # The kubeStateMetricsEnabled option will be removed in the 4.0 version of the Datadog Agent chart.
+  kubeStateMetricsEnabled: false
+
+  kubeStateMetricsNetworkPolicy:
+    # datadog.kubeStateMetricsNetworkPolicy.create -- If true, create a NetworkPolicy for kube state metrics
+    create: false
+
+  kubeStateMetricsCore:
+    # datadog.kubeStateMetricsCore.enabled -- Enable the kubernetes_state_core check in the Cluster Agent (Requires Cluster Agent 1.12.0+)
+
+    ## ref: https://docs.datadoghq.com/integrations/kubernetes_state_core
+    enabled: false
+
+    rbac:
+    # datadog.kubeStateMetricsCore.rbac.create -- If true, create & use RBAC resources
+      create: false
+
 ## This is the Datadog Cluster Agent implementation that handles cluster-wide
 ## metrics more cleanly, separates concerns for better rbac, and implements
 ## the external metrics API so you can autoscale HPAs based on datadog metrics
