@@ -28,6 +28,15 @@ datadog:
   kubeStateMetricsEnabled: false
   kubelet:
     tlsVerify: true #required for AKS
+  containerImageCollection:
+    # datadog.containerImageCollection.enabled -- Enable collection of container image metadata
+    # This parameter requires Agent version 7.46+
+    enabled: true
+  orchestratorExplorer:
+    # datadog.orchestratorExplorer.enabled -- Set this to false to disable the orchestrator explorer
+    ## This requires processAgent.enabled and clusterAgent.enabled to be set to true
+    ## ref: TODO - add doc link
+    enabled: true
   networkMonitoring:
     enabled: false #required to use Datadog Network Performance Monitoring
   serviceMonitoring:
