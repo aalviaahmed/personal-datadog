@@ -1,0 +1,50 @@
+datadog:
+  clusterName: <ENTER_CLUSTER_NAME>
+  apiKey: <ENTER_DATADOG_API_KEY>
+  site: <ENTER_DATADOG_SITE>
+  ## Set to 'datadoghq.com' to send data to the US1 site (default).
+  ## Set to 'datadoghq.eu' to send data to the EU site.
+  ## Set to 'us3.datadoghq.com' to send data to the US3 site.
+  ## Set to 'us5.datadoghq.com' to send data to the US5 site.
+  ## Set to 'ddog-gov.com' to send data to the US1-FED site.
+  ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
+  clusterChecks:
+    enabled: true
+  apm:
+    socketEnabled: true #required for APM Trace Collection via UNIX Domain Socket https://docs.datadoghq.com/containers/kubernetes/apm/?tab=uds#configure-the-datadog-agent-to-accept-traces 
+    portEnabled: true #required for APM Trace Collection via local host port 8126
+    instrumentation:
+       enabled: true
+  logs:
+    enabled: false #required for Log Collection
+    containerCollectAll: false #required to collect all conatiner logs 
+  processAgent:
+    enabled: true
+    processCollection: truu #required for Live Containers View & Live Process collection
+  dogstatsd:
+    useHostPort: true
+  kubeStateMetricsCore:
+    enabled: true
+  kubeStateMetricsEnabled: false
+  kubelet:
+    tlsVerify: true #required for AKS
+  networkMonitoring:
+    enabled: false #required to use Datadog Network Performance Monitoring
+  serviceMonitoring:
+    enabled: false #required to use Datadog Universal Service Monitoring  
+  securityAgent:
+    compliance:
+      enabled: false #required for Datadog Cloud Security Managment Enterprise 
+    runtime:
+      enabled: false #required for Dataadog Cloud Workload Security 
+clusterAgent:
+  enabled: true
+  replicas: 1 #Default is 1, increase for HA as needed 
+clusterChecksRunner:
+  enabled: true
+  replicas: 1
+remoteConfiguration:
+  # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
+  # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
+  # Preferred way to enable Remote Configuration.
+  enabled: true
