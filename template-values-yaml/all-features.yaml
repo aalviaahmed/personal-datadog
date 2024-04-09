@@ -23,7 +23,6 @@ datadog:
     enabled: true #required for Log Collection
     containerCollectAll: true #required to collect all conatiner logs
     containerCollectUsingFiles: true #required to have Agent collect logs from Kubernetes Files
-  # container
   processAgent:
     processCollection: true #required for Live Containers View & Live Process collection
   dogstatsd:
@@ -32,12 +31,12 @@ datadog:
     enabled: true
   kubeStateMetricsEnabled: false
   kubelet:
-    tlsVerify: false #required for AKS
+    tlsVerify: false #required for AKS, default is true. 
   networkMonitoring:
     enabled: true #required to use Datadog Network Performance Monitoring
   serviceMonitoring:
     enabled: true #required to use Datadog Universal Service Monitoring  
-  #required for Datadog Cloud Security Managment Enterprise 
+  #required for Datadog Cloud Security Managment Enterprise SKU 
   securityAgent:
     compliance:
       enabled: true 
@@ -100,4 +99,5 @@ remoteConfiguration:
   # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
   # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
+  # Requires Remote Configuration to be enabled on your Datadog instance & use of an API Key with RC enabled. 
   enabled: true
