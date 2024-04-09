@@ -1,0 +1,84 @@
+#This template is desinged for Datadog Agent deployments on Azure Kubernetes Services and is designed to have all features of the agent enabled
+datadog:
+  clusterName: <ENTER_CLUSTER_NAME>
+  apiKey: <ENTER_DATADOG_API_KEY>
+  site: <ENTER_DATADOG_SITE>
+  apm:
+    socketEnabled: false #required for APM Trace Collection via UDS
+    portEnabled: true #required for APM Trace Collection via local host port 8126
+  logs:
+    enabled: true #required for Log Collection
+    containerCollectAll: true #required to collect all conatiner logs
+    containerCollectUsingFiles: true #required to have Agent collect logs from Kubernetes Files
+  # container
+  processAgent:
+    processCollection: true #required for Live Containers View & Live Process collection
+  dogstatsd:
+    useHostPort: true
+  kubeStateMetricsCore:
+    enabled: true
+  kubeStateMetricsEnabled: false
+  kubelet:
+    tlsVerify: false #required for AKS
+  networkMonitoring:
+    enabled: true #required to use Datadog Network Performance Monitoring
+  serviceMonitoring:
+    enabled: true #required to use Datadog Universal Service Monitoring  
+  securityAgent:
+    compliance:
+      enabled: true #required for Datadog Cloud Security Managment Enterprise 
+    runtime:
+      enabled: true #required for Dataadog Cloud Workload Security 
+  sbom:
+    containerImage:
+      enabled: true
+    host:
+      enabled: true
+    # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+  containerExclude:  # "image:datadog/agent"
+
+  # datadog.containerInclude -- Include containers in Agent Autodiscovery, as a space-separated list.
+  # If a container matches an include rule, it’s always included in Autodiscovery
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+  containerInclude:
+
+  # datadog.containerExcludeLogs -- Exclude logs from Agent Autodiscovery, as a space-separated list
+  containerExcludeLogs:
+
+  # datadog.containerIncludeLogs -- Include logs in Agent Autodiscovery, as a space-separated list
+  containerIncludeLogs:
+
+  # datadog.containerExcludeMetrics -- Exclude metrics from Agent Autodiscovery, as a space-separated list
+  containerExcludeMetrics:
+
+  # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
+  containerIncludeMetrics:
+
+  # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
+  excludePauseContainer: true
+clusterAgent:
+  enabled: true
+  replicas: 1 #Default is 1, increase for HA as needed 
+  admissionController:
+    # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
+    enabled: true
+
+    # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
+    webhookName: datadog-webhook
+
+    # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
+    mutateUnlabelled: false
+
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+
+    ## If clusterAgent.admissionController.configMode is not set:
+    ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
+    ##   * and datadog.apm.portEnabled is true, the Admission Controller uses hostip.
+    ##   * Otherwise, the Admission Controller defaults to hostip.
+    ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## ref: https://docs.datadoghq.com/agent/cluster_agent/admissi
