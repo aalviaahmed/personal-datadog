@@ -27,6 +27,8 @@ datadog:
     processCollection: true #required for Live Containers View & Live Process collection
   dogstatsd:
     useHostPort: true 
+     # datadog.dogstatsd.nonLocalTraffic -- Enable this to make each node accept non-local statsd traffic (from outside of the pod)
+    nonLocalTraffic: true 
   kubeStateMetricsCore:
     enabled: true
   kubeStateMetricsEnabled: false
