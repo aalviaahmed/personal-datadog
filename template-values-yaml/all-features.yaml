@@ -16,6 +16,10 @@ datadog:
   ## Set to 'ddog-gov.com' to send data to the US1-FED site.
   ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
   site: # datadoghq.com
+  #Setting this will ensure all of the services identifed via usm report to a particular env when viewing the Service Catalog & tag all metrics collected by agent with env:<value>
+  #env:
+     #- name: DD_ENV
+       #value: <DD_ENV> 
   apm:
     socketEnabled: false #required for APM Trace Collection via UDS
     portEnabled: true #required for APM Trace Collection via local host port 8126
