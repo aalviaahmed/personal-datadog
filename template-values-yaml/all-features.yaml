@@ -5,6 +5,7 @@
 ## GCR Asia - use asia.gcr.io/datadoghq
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
+targetSystem: "linux"
 registry:  # gcr.io/datadoghq
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
