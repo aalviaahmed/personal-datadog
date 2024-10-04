@@ -6,7 +6,7 @@
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
 targetSystem: "linux"
-registry:  # gcr.io/datadoghq
+registry:  public.ecr.aws/datadog
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
@@ -53,7 +53,7 @@ datadog:
     containerImage:
       enabled: false #required for scanning of Container Image Vulnerabilities
     host:
-      enabled: true
+      enabled: false
     # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
 
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
@@ -107,4 +107,4 @@ remoteConfiguration:
   # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
   # Preferred way to enable Remote Configuration.
   # Requires Remote Configuration to be enabled on your Datadog instance & use of an API Key with RC enabled. 
-  enabled: false
+  enabled: true
