@@ -22,11 +22,13 @@ datadog:
      #- name: DD_ENV
        #value: <DD_ENV> 
   #datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
+  #https://docs.datadoghq.com/containers/kubernetes/tag/?tab=helm#tag-extraction 
   nodeLabelsAsTags: {}
   #   beta.kubernetes.io/instance-type: aws-instance-type
   #   kubernetes.io/role: kube_role
   #   <KUBERNETES_NODE_LABEL>: <DATADOG_TAG_KEY>
   # datadog.podLabelsAsTags -- Provide a mapping of Kubernetes Labels to Datadog Tags
+  #https://docs.datadoghq.com/containers/kubernetes/tag/?tab=helm#tag-extraction 
   podLabelsAsTags: {}
   #   app: kube_app
   #   release: helm_release
