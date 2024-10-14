@@ -6,7 +6,7 @@
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
 targetSystem: "linux"
-registry:  public.ecr.aws/datadog
+registry:  public.ecr.aws/datadog 
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
@@ -21,6 +21,21 @@ datadog:
   #env:
      #- name: DD_ENV
        #value: <DD_ENV> 
+  #datadog.nodeLabelsAsTags -- Provide a mapping of Kubernetes Node Labels to Datadog Tags
+  nodeLabelsAsTags: {}
+  #   beta.kubernetes.io/instance-type: aws-instance-type
+  #   kubernetes.io/role: kube_role
+  #   <KUBERNETES_NODE_LABEL>: <DATADOG_TAG_KEY>
+  # datadog.podLabelsAsTags -- Provide a mapping of Kubernetes Labels to Datadog Tags
+  podLabelsAsTags: {}
+  #   app: kube_app
+  #   release: helm_release
+  #   <KUBERNETES_LABEL>: <DATADOG_TAG_KEY>
+  # datadog.podAnnotationsAsTags -- Provide a mapping of Kubernetes Annotations to Datadog Tags
+  ## Learn more about tagging: https://docs.datadoghq.com/tagging/
+  tags: []
+  #   - "<KEY_1>:<VALUE_1>"
+  #   - "<KEY_2>:<VALUE_2>"
   apm:
     socketEnabled: false #required for APM Trace Collection via UDS
     portEnabled: false #required for APM Trace Collection via local host port 8126
@@ -49,13 +64,22 @@ datadog:
       enabled: false 
     runtime:
       enabled: false 
+ # Software Bill of Materials configuration
   sbom:
     containerImage:
-      enabled: false #required for scanning of Container Image Vulnerabilities
-    host:
+      # datadog.sbom.containerImage.enabled -- Enable SBOM collection for container images
       enabled: false
-    # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
+      # datadog.sbom.containerImage.uncompressedLayersSupport -- Use container runtime snapshotter
+      # This should be set to true when using EKS, GKE or if containerd is configured to
+      # discard uncompressed layers.
+      # This feature will cause the SYS_ADMIN capability to be added to the Agent container.
+      uncompressedLayersSupport: false
+    host:
+      # datadog.sbom.host.enabled -- Enable SBOM collection for host filesystems
+      enabled: false
 
+    # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
+]
   ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
   containerExclude:  # "image:datadog/agent"
 
