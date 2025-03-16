@@ -1,60 +1,114 @@
-targetSystem: linux
-registry: public.ecr.aws/datadog
+#This template is desinged for Datadog Agent deployments on Kubernetes Clusters and is designed to have all features of the agent enabled
+## Currently we offer Datadog Agent images on:
+## GCR US - use gcr.io/datadoghq
+## GCR Europe - use eu.gcr.io/datadoghq
+## GCR Asia - use asia.gcr.io/datadoghq
+## AWS - use public.ecr.aws/datadog
+## DockerHub - use docker.io/datadog
+targetSystem: "linux"
+registry:   public.ecr.aws/datadog
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
-  site: null
+  ## Set to 'datadoghq.com' to send data to the US1 site (default).
+  ## Set to 'datadoghq.eu' to send data to the EU site.
+  ## Set to 'us3.datadoghq.com' to send data to the US3 site.
+  ## Set to 'us5.datadoghq.com' to send data to the US5 site.
+  ## Set to 'ddog-gov.com' to send data to the US1-FED site.
+  ## Set to 'ap1.datadoghq.com' to send data to the AP1 site.
+  site: # datadoghq.com
+  #Setting this will ensure all of the services identifed via usm report to a particular env when viewing the Service Catalog & tag all metrics collected by agent with env:<value>
   env:
-    - name: DD_ENV
-      value: dev
-    - name: DD_HOSTNAME
-      valueFrom:
+     - name: DD_ENV
+       value: dev 
+     - name: DD_HOSTNAME
+       valueFrom:
         fieldRef:
           fieldPath: spec.nodeName
   apm:
-    socketEnabled: false
-    portEnabled: true
+    socketEnabled: false #required for APM Trace Collection via UDS
+    portEnabled: true #required for APM Trace Collection via local host port 8126
   logs:
-    enabled: true
-    containerCollectAll: true
-    containerCollectUsingFiles: true
+    enabled: true #required for Log Collection
+    containerCollectAll: true #required to collect all conatiner logs
+    containerCollectUsingFiles: true #required to have Agent collect logs from Kubernetes Files
   processAgent:
-    processCollection: true
+    processCollection: true #required for Live Containers View & Live Process collection
   dogstatsd:
-    useHostPort: true
-    nonLocalTraffic: true
+    useHostPort: true 
+     # datadog.dogstatsd.nonLocalTraffic -- Enable this to make each node accept non-local statsd traffic (from outside of the pod)
+    nonLocalTraffic: true 
   kubeStateMetricsCore:
     enabled: true
   kubeStateMetricsEnabled: false
   kubelet:
-    tlsVerify: false
+    tlsVerify: false #required for AKS, default is true. 
   networkMonitoring:
-    enabled: true
+    enabled: true #required to use Datadog Network Performance Monitoring
   serviceMonitoring:
-    enabled: true
+    enabled: true #required to use Datadog Universal Service Monitoring  
+  #required for Datadog Cloud Security Managment Enterprise SKU 
   securityAgent:
     compliance:
-      enabled: true
+      enabled: true 
     runtime:
-      enabled: true
+      enabled: true 
   sbom:
     containerImage:
-      enabled: true
+      enabled: true #required for scanning of Container Image Vulnerabilities
     host:
       enabled: true
-  containerExclude: null
-  containerInclude: null
-  containerExcludeLogs: null
-  containerIncludeLogs: null
-  containerExcludeMetrics: null
-  containerIncludeMetrics: null
+    # datadog.containerExclude -- Exclude containers from Agent Autodiscovery, as a space-separated list
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#exclude-containers
+  containerExclude:  # "image:datadog/agent"
+
+  # datadog.containerInclude -- Include containers in Agent Autodiscovery, as a space-separated list.
+  # If a container matches an include rule, it’s always included in Autodiscovery
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#include-containers
+  containerInclude:
+
+  # datadog.containerExcludeLogs -- Exclude logs from Agent Autodiscovery, as a space-separated list
+  containerExcludeLogs:
+
+  # datadog.containerIncludeLogs -- Include logs in Agent Autodiscovery, as a space-separated list
+  containerIncludeLogs:
+
+  # datadog.containerExcludeMetrics -- Exclude metrics from Agent Autodiscovery, as a space-separated list
+  containerExcludeMetrics:
+
+  # datadog.containerIncludeMetrics -- Include metrics in Agent Autodiscovery, as a space-separated list
+  containerIncludeMetrics:
+
+  # datadog.excludePauseContainer -- Exclude pause containers from Agent Autodiscovery.
+
+  ## ref: https://docs.datadoghq.com/agent/guide/autodiscovery-management/?tab=containerizedagent#pause-containers
   excludePauseContainer: true
 clusterAgent:
   enabled: true
-  replicas: 1
+  replicas: 1 #Default is 1, increase for HA as needed 
   admissionController:
+    # clusterAgent.admissionController.enabled -- Enable the admissionController to be able to inject APM/Dogstatsd config and standard tags (env, service, version) automatically into your pods
     enabled: true
+
+    # clusterAgent.admissionController.webhookName -- Name of the mutatingwebhookconfigurations created by the cluster-agent
     webhookName: datadog-webhook
+
+    # clusterAgent.admissionController.mutateUnlabelled -- Enable injecting config without having the pod label 'admission.datadoghq.com/enabled="true"'
     mutateUnlabelled: false
+
+    # clusterAgent.admissionController.configMode -- The kind of configuration to be injected, it can be "hostip", "service", or "socket".
+
+    ## If clusterAgent.admissionController.configMode is not set:
+    ##   * and datadog.apm.socketEnabled is true, the Admission Controller uses socket.
+    ##   * and datadog.apm.portEnabled is true, the Admission Controller uses hostip.
+    ##   * Otherwise, the Admission Controller defaults to hostip.
+    ## Note: "service" mode relies on the internal traffic service to target the agent running on the local node (requires Kubernetes v1.22+).
+    ## ref: https://docs.datadoghq.com/agent/cluster_agent/admission
 remoteConfiguration:
+  # remoteConfiguration.enabled -- Set to true to enable remote configuration on the Cluster Agent (if set) and the node agent.
+  # Can be overridden if `datadog.remoteConfiguration.enabled` or `clusterAgent.admissionController.remoteInstrumentation.enabled` is set to `false`.
+  # Preferred way to enable Remote Configuration.
+  # Requires Remote Configuration to be enabled on your Datadog instance & use of an API Key with RC enabled. 
   enabled: true
