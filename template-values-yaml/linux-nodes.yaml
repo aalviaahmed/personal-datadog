@@ -28,6 +28,17 @@ datadog:
   apm:
     socketEnabled: false #required for APM Trace Collection via UDS
     portEnabled: true #required for APM Trace Collection via local host port 8126
+    instrumentation:
+      enabled: false #flag to enable Datadog Single-Step APM Instrumentation 
+      #disabledNamespaces:
+        #- "kube-system"
+        #- "default"
+      #libVersions:
+        #java: "1"
+        #dotnet: "3"
+        #python: "2"
+        #js: "5"
+        #php: "1"
   logs:
     enabled: true #required for Log Collection
     containerCollectAll: true #required to collect all conatiner logs
