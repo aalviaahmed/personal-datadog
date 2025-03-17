@@ -6,7 +6,7 @@
 ## AWS - use public.ecr.aws/datadog
 ## DockerHub - use docker.io/datadog
 targetSystem: "linux"
-registry:   public.ecr.aws/datadog
+registry:   #public.ecr.aws/datadog
 datadog:
   clusterName: <ENTER_CLUSTER_NAME>
   apiKey: <ENTER_DATADOG_API_KEY>
